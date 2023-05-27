@@ -121,13 +121,12 @@ def define_color(mask_frame):
 
 
 def process(frame, start_point, rect_height, rect_width, key, skip):
-    height, width, _ = frame.shape
     end_point = (start_point[0] + rect_width, start_point[1] + rect_height)
     color = (255, 0, 0)
     thickness = 2
     rect = cv2.rectangle(frame, start_point, end_point, color, thickness)
-    #hsv_frame = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV) # for screen
-    hsv_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV) # for camera
+    # hsv_frame = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV) # for screen
+    hsv_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)  # for camera
     mask_frame = hsv_frame[start_point[1]:end_point[1], start_point[0]:end_point[0]]
 
     color_name, mask = define_color(mask_frame)
@@ -228,9 +227,10 @@ def main():
     monitor = {'top': 0, 'left': 0, 'width': w, 'height': h}
     '''
     # for camera
-    #for standard camera just 0
+    # for standard camera just 0
     cap = cv2.VideoCapture(gstreamer_pipeline(flip_method=4), cv2.CAP_GSTREAMER)
-    h, w, _ = cap.read()[1].shape
+    # h, w, _ = cap.read()
+    h, w = 720, 1280
 
     rect_height = 40
     rect_width = 20
@@ -268,13 +268,13 @@ def main():
         if skip > 2000000000:
             skip = 0
 
-        #frame = np.array(Image.frombytes('RGB', (w, h), sct.grab(monitor).rgb)) # for screen
-        _, frame = cap.read() #for camera
+        # frame = np.array(Image.frombytes('RGB', (w, h), sct.grab(monitor).rgb)) # for screen
+        _, frame = cap.read()  # for camera
 
         invert = process(frame, start_point, rect_height, rect_width, query, skip)
 
-        #cv2.imshow('Inverted', cv2.cvtColor(invert, cv2.COLOR_RGB2BGR)) # for screen
-        cv2.imshow('Inverted', invert) # for camera
+        # cv2.imshow('Inverted', cv2.cvtColor(invert, cv2.COLOR_RGB2BGR)) # for screen
+        cv2.imshow('Inverted', invert)  # for camera
 
 
 if __name__ == "__main__":
